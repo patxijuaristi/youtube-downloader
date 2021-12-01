@@ -11,6 +11,7 @@ from threading import Thread, Lock
 import utils
 from youtube_scraper import YoutubeScraper
 import youtube_downloader
+import webbrowser
 
 
 raiz = Tk()
@@ -168,8 +169,9 @@ def empezarScraping():
 
 def establecerDirectorio():
     path = filedialog.askdirectory(initialdir="/", title="Select file")
-    if(path[len(path) - 1] != '/' and path[len(path) - 1] != '\\'):
-        path = path + '/'
+    if(path != ''):
+        if(path[len(path) - 1] != '/' and path[len(path) - 1] != '\\'):
+            path = path + '/'
     directorioPath.set(path)
     rutaCarpeta.set(path)
 
@@ -198,5 +200,14 @@ botonDir = Button(ficheroFrame, text="Folder", command=establecerDirectorio,
 botonBuscar = Button(miFrame, text="Download", command=empezarScraping,
                      bg='red', fg='white', font=('Arial', 14))
 botonBuscar.grid(row=5, column=0, columnspan=5, pady=(15, 15))
+
+def abrirWeb(url):
+   webbrowser.open_new_tab(url)
+
+#Create a Label to display the link
+link = Label(raiz, text="JuarisTech.com",font=('Helveticabold', 12), fg="blue", cursor="hand2")
+link.pack(side='right')
+link.bind("<Button-1>", lambda e:
+abrirWeb("https://juaristech.com"))
 
 raiz.mainloop()

@@ -34,7 +34,7 @@ class YoutubeScraper:
     def scrapearVideo(self, kw):
         video = Video(kw)
         try:
-            time.sleep(3)
+            time.sleep(2)
             url = 'https://www.youtube.com/results?search_query='+kw.replace(' ','+')
             self.driver.get(url)
             
