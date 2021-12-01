@@ -12,7 +12,11 @@ import utils
 from youtube_scraper import YoutubeScraper
 import youtube_downloader
 import webbrowser
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 
+initChrome = webdriver.Chrome(ChromeDriverManager().install())
+initChrome.quit()
 
 raiz = Tk()
 icono = PhotoImage(file=utils.resource_path("youtube.png"))

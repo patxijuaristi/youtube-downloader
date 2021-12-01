@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import random
 import time
 
 from selenium import webdriver
@@ -55,4 +54,5 @@ class YoutubeScraper:
             return None
     
     def endDriver(self):
-        self.driver.quit()
+        if(self.driver != None):
+            self.driver.quit()
