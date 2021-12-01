@@ -13,13 +13,20 @@ def descargarVideo(url, kw, formato, subtitulos, rutaFichero):
 		for key in captionsDict.keys():
 			if 'es-ES' in str(key):
 				formatoSubts = 'es-ES'
+				break
+			if 'en-US' in str(key):
+				formatoSubts = 'en-US'
+				break
+			if 'a.en' in str(key):
+				formatoSubts = 'a.en'
+				break
+		
 		if(subtitulos):
 			subts = yt.captions[formatoSubts].generate_srt_captions()
 			f= open(rutaFichero + kwName+"-subtitulos.txt","w+", encoding='utf-8')
 			f.write(subts)
 			f.close()
-	except Exception as e:
-		print(e)
+	except:
 		pass
 	
 	try:
