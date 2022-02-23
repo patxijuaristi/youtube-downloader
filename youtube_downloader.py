@@ -26,7 +26,8 @@ def descargarVideo(url, kw, formato, subtitulos, rutaFichero):
 			f= open(rutaFichero + kwName+"-subtitulos.txt","w+", encoding='utf-8')
 			f.write(subts)
 			f.close()
-	except:
+	except Exception as e:
+		print(e)
 		pass
 	
 	try:

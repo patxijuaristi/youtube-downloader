@@ -208,7 +208,6 @@ botonBuscar.grid(row=5, column=0, columnspan=5, pady=(15, 15))
 def abrirWeb(url):
    webbrowser.open_new_tab(url)
 
-#Create a Label to display the link
 link = Label(raiz, text="JuarisTech.com",font=('Helveticabold', 12), fg="blue", cursor="hand2")
 link.pack(side='right')
 link.bind("<Button-1>", lambda e:
