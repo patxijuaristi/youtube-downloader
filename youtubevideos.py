@@ -8,6 +8,7 @@ from tkinter import IntVar, Radiobutton, Tk, Frame, Text, Scrollbar, Label, Butt
     PhotoImage, StringVar, Entry, messagebox
 from tkinter.constants import END
 from threading import Thread, Lock
+from checkLicense import checkLicense
 import utils
 from youtube_scraper import YoutubeScraper
 import youtube_downloader
@@ -29,6 +30,7 @@ miFrame.pack()
 rutaCarpeta = StringVar()
 directorioPath = StringVar()
 subtSelect=True
+inputKeywords=True
 queDescargar = 'mp4'
 listaV = []
 hilos = 5
@@ -38,7 +40,7 @@ lockHilos = Lock()
 
 ####################################
 subtitulosFrame=Frame(miFrame)
-subtitulosFrame.grid(row=1, column=0, columnspan=5, padx=20, pady=15)
+subtitulosFrame.grid(row=1, column=0, columnspan=5, padx=20, pady=7)
 
 def selecSubt():
     global subtSelect
@@ -56,8 +58,27 @@ subtSi = Radiobutton(subtitulosFrame, text="Yes", variable=opcionSubt, value=1, 
 subtNo = Radiobutton(subtitulosFrame, text="No", variable=opcionSubt, value=2, command=selecSubt, font=('Arial', 12 )).pack(side='left')
 
 ####################################
+tipoInputFrame=Frame(miFrame)
+tipoInputFrame.grid(row=3, column=0, columnspan=5, padx=20, pady=7)
+
+def selecTipoInput():
+    global inputKeywords
+    if(opciontipoInput.get()==2):
+        inputKeywords = False
+    else:
+        inputKeywords = True
+
+opciontipoInput = IntVar()
+opciontipoInput.set(1)
+monitor = Label(tipoInputFrame, text='Input', font=('Arial', 12 ))
+monitor.pack(side='left')
+
+keyword= Radiobutton(tipoInputFrame, text="Keyword", variable=opciontipoInput, value=1, command=selecTipoInput, font=('Arial', 12 )).pack(side='left')
+url = Radiobutton(tipoInputFrame, text="URL", variable=opciontipoInput, value=2, command=selecTipoInput, font=('Arial', 12 )).pack(side='left')
+
+####################################
 formatoFrame=Frame(miFrame)
-formatoFrame.grid(row=2, column=0, columnspan=5, padx=20, pady=15)
+formatoFrame.grid(row=2, column=0, columnspan=5, padx=20, pady=7)
 
 def selecF():
     global queDescargar
@@ -80,28 +101,28 @@ gifRadio = Radiobutton(formatoFrame, text="Only Subtitles", variable=opcionForma
 ####
 
 textResults = Text(miFrame, width=50, height=15)
-textResults.grid(row=3, column=4, padx=5, pady=5)
+textResults.grid(row=4, column=4, padx=5, pady=5)
 
 scrollResults = Scrollbar(miFrame, command=textResults.yview)
-scrollResults.grid(row=3, column=5, sticky="nsew")
+scrollResults.grid(row=4, column=5, sticky="nsew")
 
 textResults.config(yscrollcommand=scrollResults.set)
 
 resultsLabel = Label(miFrame, text="Result: ", font=('Arial', 12))
-resultsLabel.grid(row=3, column=3, padx=5, pady=5)
+resultsLabel.grid(row=4, column=3, padx=5, pady=5)
 
 ####
 
 textKeywords = Text(miFrame, width=50, height=15)
-textKeywords.grid(row=3, column=1, padx=5, pady=5)
+textKeywords.grid(row=4, column=1, padx=5, pady=5)
 
 scrollKws = Scrollbar(miFrame, command=textKeywords.yview)
-scrollKws.grid(row=3, column=2, sticky="nsew")
+scrollKws.grid(row=4, column=2, sticky="nsew")
 
 textKeywords.config(yscrollcommand=scrollKws.set)
 
-keywordsLabel = Label(miFrame, text="Keywords: ", font=('Arial', 12))
-keywordsLabel.grid(row=3, column=0, padx=5, pady=5)
+keywordsLabel = Label(miFrame, text="Input: ", font=('Arial', 12))
+keywordsLabel.grid(row=4, column=0, padx=5, pady=5)
 
 ####
 
@@ -152,7 +173,10 @@ def empezarScraping():
             title='Empty Keywords', message='You need to introduce the keywords to download from youtube')
         return
 
-    if(directorioPath.get() != ''):
+    if(directorioPath.get() != ''):        
+        if(inputKeywords == False):
+            descargarContenidoDeUrl(kwList)
+            return
         divididos = split_list(kwList, hilos)
         if(len(divididos) < hilos):
             hilos = len(divididos)
@@ -187,6 +211,14 @@ def descargarContenido():
         raiz.update()
         cont += 1
 
+def descargarContenidoDeUrl(kwList):
+    cont = 1
+    for url in kwList:
+        youtube_downloader.descargarVideo(url, '', queDescargar, subtSelect, directorioPath.get())
+        textResults.insert(float(cont), str(cont) + ' /' +str(len(listaV)) + ' ' + url.replace('https://www.youtube.com/watch?v=','') + ' OK\n')
+        raiz.update()
+        cont += 1
+
 
 ficheroFrame = Frame(miFrame)
 ficheroFrame.grid(row=0, column=0, columnspan=5, padx=20, pady=(20, 5))
@@ -203,7 +235,7 @@ botonDir = Button(ficheroFrame, text="Folder", command=establecerDirectorio,
 
 botonBuscar = Button(miFrame, text="Download", command=empezarScraping,
                      bg='red', fg='white', font=('Arial', 14))
-botonBuscar.grid(row=5, column=0, columnspan=5, pady=(15, 15))
+botonBuscar.grid(row=6, column=0, columnspan=5, pady=(15, 15))
 
 def abrirWeb(url):
    webbrowser.open_new_tab(url)
@@ -212,5 +244,9 @@ link = Label(raiz, text="JuarisTech.com",font=('Helveticabold', 12), fg="blue", 
 link.pack(side='right')
 link.bind("<Button-1>", lambda e:
 abrirWeb("https://juaristech.com"))
+
+if(checkLicense() == False):
+    messagebox.showerror(title='License error', message='Licencia NO valida')
+    exit()
 
 raiz.mainloop()

@@ -4,8 +4,10 @@ import os
 import utils
 
 def descargarVideo(url, kw, formato, subtitulos, rutaFichero):
-	kwName=utils.convertirKwEnFilename(kw)
 	yt = YouTube(url)
+	if(kw == ''):
+		kw = yt.streams[0].title
+	kwName=utils.convertirKwEnFilename(kw)
 	
 	try:
 		captionsDict = yt.captions
