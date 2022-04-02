@@ -23,7 +23,10 @@ class YoutubeScraper:
             s=Service(ChromeDriverManager().install())
             self.driver = webdriver.Chrome(service=s, options=chrome_options)
             self.driver.get('https://www.google.com/')            
-            self.driver.find_element_by_xpath('//*[@id="L2AGLb"]').click()
+            try:
+                self.driver.find_element_by_xpath('//*[@id="L2AGLb"]').click()
+            except:
+                pass
             return True
         except Exception as e:
             print(e)

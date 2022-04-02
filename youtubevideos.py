@@ -8,15 +8,20 @@ from tkinter import IntVar, Radiobutton, Tk, Frame, Text, Scrollbar, Label, Butt
     PhotoImage, StringVar, Entry, messagebox
 from tkinter.constants import END
 from threading import Thread, Lock
-from checkLicense import checkLicense
 import utils
 from youtube_scraper import YoutubeScraper
 import youtube_downloader
 import webbrowser
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 
-initChrome = webdriver.Chrome(ChromeDriverManager().install())
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+s=Service(ChromeDriverManager().install())
+initChrome = webdriver.Chrome(service=s, options=chrome_options)
 initChrome.quit()
 
 raiz = Tk()
@@ -223,18 +228,15 @@ def descargarContenidoDeUrl(kwList):
 ficheroFrame = Frame(miFrame)
 ficheroFrame.grid(row=0, column=0, columnspan=5, padx=20, pady=(20, 5))
 
-nameCarpeta = Label(ficheroFrame, text="Output folder",
-                    font=('Arial', 12)).pack(side='left')
+nameCarpeta = Label(ficheroFrame, text="Output folder", font=('Arial', 12)).pack(side='left')
 
 nameCarpetaEntry = Entry(ficheroFrame, textvariable=rutaCarpeta, width=70)
 nameCarpetaEntry.config(fg="red", justify="center", font=('Arial', 12))
 nameCarpetaEntry.pack(side='left')
 
-botonDir = Button(ficheroFrame, text="Folder", command=establecerDirectorio,
-                  bg='white', fg='black', font=('Arial', 12)).pack(side='left')
+botonDir = Button(ficheroFrame, text="Folder", command=establecerDirectorio, bg='white', fg='black', font=('Arial', 12)).pack(side='left')
 
-botonBuscar = Button(miFrame, text="Download", command=empezarScraping,
-                     bg='red', fg='white', font=('Arial', 14))
+botonBuscar = Button(miFrame, text="Download", command=empezarScraping, bg='red', fg='white', font=('Arial', 14))
 botonBuscar.grid(row=6, column=0, columnspan=5, pady=(15, 15))
 
 def abrirWeb(url):
@@ -244,9 +246,5 @@ link = Label(raiz, text="JuarisTech.com",font=('Helveticabold', 12), fg="blue", 
 link.pack(side='right')
 link.bind("<Button-1>", lambda e:
 abrirWeb("https://juaristech.com"))
-
-if(checkLicense() == False):
-    messagebox.showerror(title='License error', message='Licencia NO valida')
-    exit()
 
 raiz.mainloop()
